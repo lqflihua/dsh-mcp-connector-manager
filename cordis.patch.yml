@@ -1,0 +1,6 @@
+# @lihua/dsh-mcp-manager —— 宿主插件实例（CLI 安装时随 dsh.bundle.patch 自动应用）
+- insert:
+    - id: mcp-manager
+      name: '@lihua/dsh-mcp-manager'
+      config:
+        mirrorPath: 'I:/deepseek-harness工作区/mcp-manager-registry-backup/sources.json'
