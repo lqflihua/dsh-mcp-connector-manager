@@ -7,10 +7,10 @@ DeepSeek Harness（DSH）数据源连接器管理器插件：**入口嵌入聊�
 ## ✨ 功能
 
 - **聊天框内嵌入口**：输入区左侧工具位常驻 logo 叠放按钮（随启用数据源动态变化）
-- **气泡菜单**：每个数据源一行（图标 + 名称 + 状态徽标 + 总开关），一个开关控制该源下全部子服务
+- **气泡菜单**：每个数据源一行（名称 + 状态徽标 + 总开关），一个开关控制该源下全部子服务
 - **管理连接器对话框**：
   - 数据源列表（编辑 / 删除）
-  - ＋ 添加数据源（名称 / 图标 emoji / 描述 / 多条 MCP 服务条目：serverName · URL · Token · 用途）
+  - ＋ 添加数据源（名称 / 描述 / Token（数据源级，所有服务共用）/ 多条 MCP 服务条目：serverName · URL · 用途，点行展开编辑）
   - **📥 从配置导入**：粘贴 mcp.json 格式或 cordis.yml 备份格式，或直接选文件，一键解析
 - **启动自愈**：`sources.json` 是唯一事实源；每次启动从注册表自动再生成 cordis.yml 受管区块——配置文件被删/损坏都能自愈
 - **兜底面板**：`/api/dsh/mcp-manager/panel`（聊天框入口异常时的备用网页）
@@ -25,7 +25,7 @@ DeepSeek Harness（DSH）数据源连接器管理器插件：**入口嵌入聊�
 dsh plugin --profile <你的profile名> add <本仓库路径或git地址>
 ```
 
-> Windows 路径正斜杠/反斜杠均可；`<本仓库绝对路径>` 指本仓库克隆后的目录。
+> Windows 路径正斜杠/反斜杠均可；仓库克隆到本地后传目录路径，或直接传 Git 地址。
 > CLI 会读取 `package.json` 的 `dsh.bundle.patch` 自动注册宿主实例，并按 `dsh.client.inject` 加载聊天框客户端。
 
 ### 方式二：手动
@@ -44,7 +44,7 @@ dsh plugin --profile <你的profile名> add <本仓库路径或git地址>
 ## 🚀 使用
 
 1. 重启后，聊天输入框左下角出现 **logo 叠放按钮**
-2. 点击 → 气泡菜单：每个数据源一行（图标 + 名称 + 状态 + 总开关）
+2. 点击 → 气泡菜单：每个数据源一行（名称 + 状态 + 总开关）
 3. 底部「↗ 管理连接器」→ 添加 / 编辑 / 删除数据源，支持 **📥 从配置导入**（粘贴 mcp.json 或 cordis.yml 备份）
 4. 所有修改 **即时生效**（HMR），无需重启
 
@@ -65,7 +65,8 @@ cordis.yml 受管区块（# --- mcp-manager managed ---）
 @deepseek-ai/dsh-mcp-client 实例 → MCP 数据源
 ```
 
-- **单一事实源**：`~/.dsh/mcp-manager/sources.json`（定义 + 状态 + Token）
+- **单一事实源**：`~/.dsh/mcp-manager/sources.json`（定义 + 状态 + Token；Token 数据源级只存一份，所有服务自动继承）
+- **参考格式**：仓库自带 `sources.json.example`（Token 为 `YOUR_TOKEN_HERE` 占位），照抄字段即可
 - **cordis.yml 受管区块为生成物**，请勿手改；区块外内容永不触碰
 - **启动自愈**：受管区块每次启动从注册表再生成——配置被删/损坏自动恢复
 - **工作区镜像（可选）**：默认关闭；通过 config.mirrorPath 开启后，注册表每次保存自动镜像到指定目录（Token 脱敏）

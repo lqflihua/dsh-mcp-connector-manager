@@ -2,3 +2,7 @@ node_modules/
 *.tmp
 *.log
 .DS_Store
+# 本地注册表/配置（含 Token）——永不入库
+sources.json
+.dsh/
+cordis.patch.yml.local

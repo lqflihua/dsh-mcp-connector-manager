@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "id": "example",
+      "name": "示例数据源",
+      "icon": "⚖️",
+      "description": "按此格式添加你的 MCP 数据源（可复制本文件为 sources.json）",
+      "token": "YOUR_TOKEN_HERE",
+      "enabled": true,
+      "servers": [
+        {
+          "serverName": "example-server",
+          "url": "https://example.com/mcp",
+          "purpose": "示例服务"
+        }
+      ]
+    }
+  ]
+]

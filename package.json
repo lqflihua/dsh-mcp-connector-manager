@@ -21,12 +21,11 @@
     "mcp",
     "mcp-manager",
     "connector",
-    "legal",
-    "pkulaw"
+    "legal"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YOUR_ACCOUNT/dsh-mcp-manager.git"
+    "url": "git+https://github.com/lqflihua/dsh-mcp-manager.git"
   },
   "author": "lihua",
   "license": "MIT"
