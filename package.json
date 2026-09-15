@@ -1,6 +1,6 @@
 {
   "name": "@lihua/dsh-mcp-manager",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "DSH 数据源连接器管理器：聊天框工具条内查看/开关 MCP 数据源，管理对话框支持自定义添加/导入（HMR 热生效）",
   "private": true,
   "type": "module",

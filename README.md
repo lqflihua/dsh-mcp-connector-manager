@@ -2,7 +2,7 @@
 
 DeepSeek Harness（DSH）数据源连接器管理器插件：**入口嵌入聊天框**（输入区左侧工具位，logo 叠放按钮），点开气泡菜单即可查看/开关 MCP 数据源；「管理连接器」对话框支持自定义添加/编辑/删除/配置导入。所有修改 HMR 热生效，无需重启。
 
-![平台](https://img.shields.io/badge/platform-DSH_Desktop-blue) ![协议](https://img.shields.io/badge/license-MIT-green) ![版本](https://img.shields.io/badge/version-0.2.2-orange)
+![平台](https://img.shields.io/badge/platform-DSH_Desktop-blue) ![协议](https://img.shields.io/badge/license-MIT-green) ![版本](https://img.shields.io/badge/version-0.2.4-orange)
 
 ## ✨ 功能
 
@@ -76,7 +76,25 @@ cordis.yml 受管区块（# --- mcp-manager managed ---）
 - Token 本机明文仅存于：`sources.json` 与 cordis.yml 生成物（MCP 连接所必需，物理约束）
 - 工作区镜像（可选，默认关闭，可通过 config.mirrorPath 开启）已脱敏（Token 仅留前 8 位占位）
 - 生成器白名单输出六个字段，**禁用 js 表达式注入**；用户输入经消毒（拒换行/反引号/模板插值/反斜杠，URL 限 http(s)）
+- **补丁备份（`.mcp-bak-*`）默认脱敏**：仅最新一个保留原文以支持原样回滚，更早的自动打码（保留前 8 位）；备份总数上限 5，超出自动清理
 - 请勿把含 Token 的 `sources.json` / `cordis.yml` 提交到任何仓库或云端
+
+## 📝 更新记录
+
+### v0.2.4 — 2026-09-15
+
+- **备份收敛**：补丁备份不再无限堆积——只保留最近 5 个，更早的自动删除。旧版每次写盘都新建备份且从不清理（实测可堆积 50 个以上）。
+- **备份脱敏**：历史备份中的 `Authorization` Token 自动打码（保留前 8 位）；**最新一个备份保持原文**，以确保它仍能作为原样回滚点。
+- **无变化不写盘**：`upsertManagedPatch` 判定无变化时不再写文件、也不再建备份。旧版无论是否有变化都会先建备份，这是备份堆积的直接原因。
+- **启动自愈增强**：插件启动时自动收敛一次备份目录。
+- 脱敏同时覆盖两种真实形态：DSH 物化产出的 `Authorization: Bearer xxx`（无引号）与本插件产出的 `Authorization: "Bearer xxx"`（有引号）。
+- 脱敏实现为**幂等**（按行处理并跳过已打码行），重复执行不会在已有标记后继续追加。
+
+### v0.2.3 — 2026-09-05
+
+- 修复 `upsertManagedPatch` 插入块边界解析：旧实现把插入块延伸到文件结尾，会把 `- insert:` 之后的顶层外来条目（如 `meow-memory`、`compaction-basic`）误并入 MCP 块，导致 MCP 行被整体当作「外来块」保留、末尾再追加生成块，产生重复 `mcp-*` id → 补丁自检失败并自动回滚（表现为连接器开关打不开）。
+- 现插入块终止于下一个顶格（非空、非缩进、非注释）行，仅移除块内全部为 `mcp-` 条目的受管块。
+- 附带回归：旧故障布局 → 结果无重复 id；重复运行幂等（`changed:false`）。
 
 ## 🔧 开发
 
@@ -88,7 +106,7 @@ cordis.yml 受管区块（# --- mcp-manager managed ---）
 
 ## ⚠️ 重要机制（务必先读）
 
-- 本插件**不自动写盘**：启动为只读模式，绝不修改 cordis.patch.yml（避免与 DSH 补丁物化竞争导致重复块/崩溃）。
+- 本插件**不自动写补丁**：启动绝不修改 cordis.patch.yml（避免与 DSH 补丁物化竞争导致重复块/崩溃）；启动时仅收敛备份目录（见 v0.2.4）。
 - 开关/增删改只更新注册表（sources.json）；点「应用配置到 DSH」才写入补丁，且**写前自动备份 + 写后自检（重复 id 检测）+ 异常自动回滚**。
 - DSH 会物化重写补丁文件（剥注释、重排版、值加引号）：插件按 **id 精确识别**自己的条目（含引号归一化），不依赖任何标记注释。
 - 写入格式：顶层 `- insert:` 操作包装，name 必须加引号（YAML @ 为保留字符）。
